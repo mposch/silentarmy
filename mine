@@ -1,4 +1,4 @@
 #!/bin/bash -x
-./silentarmy --use 0 --instances=2 -c stratum+tcp://eu1-zcash.flypool.org:3333   -u t1cELmy7HqZR4ioPEnGud897Z8F52kXhVks.`hostname | cut -d . -f 1`
+./silentarmy --use 0,1,2 -c stratum+tcp://eu1-zcash.flypool.org:3333   -u t1cELmy7HqZR4ioPEnGud897Z8F52kXhVks.`hostname | cut -d . -f 1`
 
 

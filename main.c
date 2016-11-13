@@ -13,7 +13,32 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <errno.h>
+#ifdef _WIN32
 #include <CL/cl.h>
+#elif defined __unix__
+#include <CL/cl.h>
+#elif defined __APPLE__
+#include <OpenCL/OpenCL.h>
+/* not there so we need to include this func */
+void *
+memrchr(s, c, n)
+const void *s;
+int c;
+size_t n;
+{
+    const unsigned char *cp;
+    
+    if (n != 0) {
+        cp = (unsigned char *)s + n;
+        do {
+            if (*(--cp) == (unsigned char)c)
+            return (void *)cp;
+        } while (--n != 0);
+    }
+    return (void *)0;
+}
+#endif
+
 #include "blake.h"
 #include "_kernel.h"
 #include "sha256.h"
