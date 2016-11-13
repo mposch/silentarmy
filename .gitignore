@@ -8,3 +8,4 @@ _temp_*
 *.tmp
 *.pyc
 tags
+/testing/deviceTest_*

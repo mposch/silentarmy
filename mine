@@ -1,4 +1,95 @@
-#!/bin/bash -x
-./silentarmy --use 0,1,2 -c stratum+tcp://eu1-zcash.flypool.org:3333   -u t1cELmy7HqZR4ioPEnGud897Z8F52kXhVks.`hostname | cut -d . -f 1`
+#!/bin/bash
+# Mine auto mining script by Matthias Posch
+# First Check dependencies
+
+# Test if a device will produce correct results by comparing the first 2 solutions to a pre calculated file
+
+test_device ()
+{
+    echo Testing device $@
+    ./sa-solver --nonce 1 -v -v --use $@ 2>&1 | grep Soln: >testing/deviceTest_$@
+    cmp testing/deviceTest_$@ testing/sols-2
+    RETVAL=$?
+if [ $RETVAL = 0  ];
+then
+echo DEVICE $@:TEST PASSED
+else
+echo DEVICE $@:TEST FAILED
+fi
+    return $RETVAL
+}
+
+
+function deps()
+{
+DEPENDENCIES="$@"
+INSTALLCMD="brew install"
+#echo checking for $DEPENDENCIES
+deps_ok=YES
+for dep in $DEPENDENCIES
+do
+echo checking $dep
+if ! which $dep &>/dev/null;  then
+echo This script requires $dep to run but it is not installed.
+echo trying to install using brew:
+if ! $INSTALLCMD $dep; then
+deps_ok=NO
+fi
+fi
+done
+if [[ $deps_ok == NO ]]; then
+echo Unmet dependencies... Aborting!
+exit 1
+else
+return 0
+fi
+}
+## Test if sa-solver exists, otherwise build it
+if [  ! -f ./sa-solver ]; then
+echo Compiling SA
+deps gcc-6 python3
+make
+fi
+
+
+
+#my t address
+if [ ! $# -eq 2 ]
+then
+echo "Using standard values"
+ADDRESS=t1cELmy7HqZR4ioPEnGud897Z8F52kXhVks
+WORKER=`hostname | cut -d . -f 1`
+else
+ADDRESS=$1
+WORKER=$2
+fi
+POOL=stratum+tcp://eu1-zcash.flypool.org:3333
+
+# Get list of usable devices
+DEVID=`./sa-solver --list | grep ID | cut -c6`
+echo $DEVID
+
+LIST=""
+for i in $DEVID; do
+if test_device "$i"; then
+    LIST=$LIST$i",";
+fi
+
+#todo test devices
+done
+#remove the last colon using bash magic
+LIST=${LIST%?}
+
+if [ -z "$LIST" ];
+then
+    echo "NONE OF THE DEVICES PASSED THE TEST! So, mining is useless. Sorry" ; exit
+else
+echo "############################################################################"
+echo Starting to mine on Flypool using Adress $ADDRESS  and Worker ID $WORKER
+echo Using devices $LIST
+echo "############################################################################"
+echo ./silentarmy --use $LIST -c $POOL   -u $ADDRESS.$WORKER
+fi
+
 
 

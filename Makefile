@@ -48,6 +48,6 @@ test : sa-solver
 	    diff -u testing/sols-100 - | cut -c 1-75
 
 clean :
-	rm -f sa-solver _kernel.h *.o _temp_*
+	rm -f sa-solver _kernel.h *.o _temp_* testing/deviceTest_*
 
 re : clean all
