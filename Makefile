@@ -5,6 +5,7 @@ OPENCL_HEADERS = "/opt/AMDAPPSDK-3.0/include"
 LIBOPENCL = "/opt/amdgpu-pro/lib/x86_64-linux-gnu"
 LDLIBS = -lOpenCL
 CC = gcc
+CPP = cpp
 endif
 ifeq ($(UNAME), Darwin)
 # Mac OS Frameworks
@@ -13,6 +14,7 @@ LIBOPENCL = "/System/Library/Frameworks/OpenCL.framework/Versions/Current/Librar
 LDLIBS = -framework OpenCL
 # gcc installed with brew or macports cause xcode gcc is only clang wrapper
 CC = gcc-6
+CPP = cpp-6
 endif
 
 # Change this path if the SDK was installed in a non-standard location
@@ -38,7 +40,7 @@ ${OBJ} : ${INCLUDES}
 
 _kernel.h : input.cl param.h
 	echo 'const char *ocl_code = R"_mrb_(' >$@
-	cpp-6 $< >>$@
+	$(CPP) $< >>$@
 	echo ')_mrb_";' >>$@
 
 test : sa-solver
