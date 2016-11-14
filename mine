@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 # Mine auto mining script by Matthias Posch
 # First Check dependencies
 
@@ -7,7 +7,7 @@
 test_device ()
 {
     echo Testing device $@
-    ./sa-solver --nonce 1 -v -v --use $@ 2>&1 | grep Soln: >testing/deviceTest_$@
+    ./sa-solver --nonce 3 -v -v --use $@ 2>&1 | grep Soln: >testing/deviceTest_$@
     cmp testing/deviceTest_$@ testing/sols-2
     RETVAL=$?
 if [ $RETVAL = 0  ];
@@ -47,7 +47,7 @@ fi
 ## Test if sa-solver exists, otherwise build it
 if [  ! -f ./sa-solver ]; then
 echo Compiling SA
-deps gcc-6 python3
+#deps gcc-6 python3
 make
 fi
 
@@ -58,7 +58,7 @@ if [ ! $# -eq 2 ]
 then
 echo "Using standard values"
 ADDRESS=t1cELmy7HqZR4ioPEnGud897Z8F52kXhVks
-WORKER=`hostname | cut -d . -f 1`
+WORKER=`hostname | cut -d . -f 1`GPU
 else
 ADDRESS=$1
 WORKER=$2
@@ -66,7 +66,7 @@ fi
 POOL=stratum+tcp://eu1-zcash.flypool.org:3333
 
 # Get list of usable devices
-DEVID=`./sa-solver --list | grep ID | cut -c6`
+DEVID=`./sa-solver --list |grep "ID " |cut -c6`
 echo $DEVID
 
 LIST=""
@@ -88,7 +88,7 @@ echo "##########################################################################
 echo Starting to mine on Flypool using Adress $ADDRESS  and Worker ID $WORKER
 echo Using devices $LIST
 echo "############################################################################"
-echo ./silentarmy --use $LIST -c $POOL   -u $ADDRESS.$WORKER
+./silentarmy --use $LIST -c $POOL   -u $ADDRESS.$WORKER
 fi
 
 
