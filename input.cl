@@ -732,6 +732,8 @@ uint expand_refs(uint *ins, uint nr_inputs, __global char **htabs,
 		DECODE_ROW(ins[i]), DECODE_SLOT1(ins[i]));
 	ins[j - 1] = expand_ref(ht, xi_offset,
 		DECODE_ROW(ins[i]), DECODE_SLOT0(ins[i]));
+	if (!i)
+ 	    break;
 	if (!round)
 	  {
 	    if (dup_to_watch == -1)
@@ -739,8 +741,6 @@ uint expand_refs(uint *ins, uint nr_inputs, __global char **htabs,
 	    else if (ins[j] == dup_to_watch || ins[j - 1] == dup_to_watch)
 		return 0;
 	  }
-	if (!i)
-	    break ;
 	i--;
 	j -= 2;
       }

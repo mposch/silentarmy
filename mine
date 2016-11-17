@@ -88,8 +88,10 @@ echo "##########################################################################
 echo Starting to mine on Flypool using Adress $ADDRESS  and Worker ID $WORKER
 echo Using devices $LIST
 echo "############################################################################"
-./silentarmy --use $LIST -c $POOL   -u $ADDRESS.$WORKER
+./silentarmy --use $LIST -c $POOL   -u $ADDRESS.$WORKER &
 fi
 
+## Start cpu MIner
 
+nheqminer_cpu -l eu1-zcash.flypool.org:3333 -u t1cELmy7HqZR4ioPEnGud897Z8F52kXhVks.debianCPU -t 2 &
 
